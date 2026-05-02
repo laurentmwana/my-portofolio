@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/themes/theme-provider";
+import { FlickeringGrid } from "@/components/magicui/flickering-grid";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Navbar } from "@/components/navbar";
 
-const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +32,42 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        figtree.variable,
+      )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased relative",
+          figtree.variable,
+        )}
+      >
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <TooltipProvider delayDuration={0}>
+            <div className="absolute inset-0 top-0 left-0 right-0 h-[100px] overflow-hidden z-0">
+              <FlickeringGrid
+                className="h-full w-full"
+                squareSize={2}
+                gridGap={2}
+                style={{
+                  maskImage: "linear-gradient(to bottom, black, transparent)",
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, black, transparent)",
+                }}
+              />
+            </div>
+            <div className="relative z-10 max-w-2xl mx-auto py-12 pb-24 sm:py-24 px-6">
+              {children}
+            </div>
+            <Navbar />
+          </TooltipProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
